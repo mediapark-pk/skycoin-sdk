@@ -1,5 +1,4 @@
 <?php
-declare(strict_type=1);
 
 namespace SkyCoin\API;
 use SkyCoin\HttpClient;
@@ -29,6 +28,6 @@ class Generic
      */
     public function csrfToken()
     {
-        return $this->client->sendRequest("/csrf", [], ["X-CSRF-Token" => "abcdef"], "GET");
+        return $this->client->sendRequest("/csrf", [], [], "GET");
     }
 }
