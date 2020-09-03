@@ -7,13 +7,21 @@ use SkyCoin\API\Blocks\Blocks;
 use SkyCoin\API\coinSupply\coinSupply;
 use SkyCoin\API\GeneralSystem\GeneralSystem;
 use SkyCoin\API\Generic;
+
+use SkyCoin\API\Network\Network;
+
 use SkyCoin\API\KeyValueStorage\KeyValueStorage;
 use SkyCoin\API\SimpleQuery\SimpleQuery;
 use SkyCoin\API\Transaction\Transaction;
 use SkyCoin\API\Uxout\Uxout;
+
 use SkyCoin\API\Wallet\Wallet;
 use SkyCoin\HttpClient;
 
+/**
+ * Class SkyCoin
+ * @package SkyCoin
+ */
 class SkyCoin
 {
     /** @var string */
@@ -34,6 +42,13 @@ class SkyCoin
     private Wallet $wallet;
 
     /**
+
+     * @var Network
+     */
+    private Network $network;
+
+    /**
+
      * @var GeneralSystem
      */
     private GeneralSystem $generalsystem;
@@ -69,6 +84,7 @@ class SkyCoin
      */
     private Transaction $transaction;
     /**
+
      * SkyCoin constructor.
      * @param Generic $generic
      */
@@ -78,6 +94,9 @@ class SkyCoin
         $httpClient = new HttpClient($ip, $port, $username, $password);
         $this->generic = new Generic($httpClient);
         $this->wallet = new Wallet($httpClient);
+
+        $this->network = new Network($httpClient);
+
         $this->generalsystem = new GeneralSystem($httpClient);
         $this->simplequery = new SimpleQuery($httpClient);
         $this->keyvalueStorage = new KeyValueStorage($httpClient);
@@ -85,6 +104,7 @@ class SkyCoin
         $this->blocks = new Blocks($httpClient);
         $this->uxout = new Uxout($httpClient);
         $this->coinSupply = new coinSupply($httpClient);
+
     }
 
     /**
@@ -104,6 +124,13 @@ class SkyCoin
     }
 
     /**
+
+     * @return Network
+     */
+    public function network(): Network
+    {
+        return $this->network;
+
      * @return GeneralSystem
      */
     public function genralsystem():GeneralSystem
@@ -158,6 +185,7 @@ class SkyCoin
     public function coinSupply():coinSupply
     {
         return $this->coinSupply;
+
     }
 
 
