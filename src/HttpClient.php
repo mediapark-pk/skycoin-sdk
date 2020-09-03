@@ -43,10 +43,8 @@ class HttpClient
      * @return \Exception|Exception
      * @throws SkyCoinException
      */
-    public function sendRequest(string $uri, array $params = [], array $headers = [], string $httpMethod = "POST")
+    public function sendRequest(string $uri,  $params , array $headers = [], string $httpMethod = "POST")
     {
-
-
         $url = null;
         //If port is given or not
         if ($this->port) {
@@ -63,13 +61,16 @@ class HttpClient
 
         //Set Complete Url
         $url .= $uri;
+//        print_r($url);
+//        die();
+        //Create Request Instance
         $request = new Request($httpMethod, $url);
 
         //Set CSRF header if request is not GET
         if (strtoupper($httpMethod) != "GET") {
             $generic = new Generic($this);
             $csrf = $generic->csrfToken()->payload()->get("csrf_token");
-           
+
             $request
                 ->headers()
                 ->set("X-CSRF-Token", $csrf);
@@ -81,15 +82,16 @@ class HttpClient
             ->set("Accept", "application/json");
 
         //Set Dynamic Headers
-        if ($headers) {
+        if (count($headers)>0) {
+
             array_walk($headers, ['self', "setHeaders"], $request);
         } else {
             $request
                 ->headers()
                 ->set("Content-Type", "application/json");
         }
-
         //Set Request Body/Params
+
         $params ? $request->payload()->use($params) : null;
 
         $request = $request->curl();
@@ -99,7 +101,6 @@ class HttpClient
 
         //Send The Request
         $response = $request->send();
-
 
         // Check for Error
         $error = $response->payload()->get("error");
@@ -113,6 +114,7 @@ class HttpClient
         if (($response->payload()->get("result") != 0) && (!$response->payload()->get("result"))) {
             throw new SkyCoinException('No response was received');
         }
+
         return $response;
 
     }
