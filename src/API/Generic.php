@@ -29,6 +29,6 @@ class Generic
      */
     public function csrfToken()
     {
-        return $this->client->sendRequest("/csrf", [], ["X-CSRF-Token" => "abcdef"], "GET");
+        return $this->client->sendRequest("/csrf", [], [], "GET");
     }
 }

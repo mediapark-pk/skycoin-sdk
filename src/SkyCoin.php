@@ -4,6 +4,7 @@
 namespace SkyCoin;
 
 use SkyCoin\API\Generic;
+use SkyCoin\API\Wallet\Wallet;
 use SkyCoin\HttpClient;
 
 class SkyCoin
@@ -21,6 +22,11 @@ class SkyCoin
     private $generic;
 
     /**
+     * @var Wallet
+     */
+    private Wallet $wallet;
+
+    /**
      * SkyCoin constructor.
      * @param Generic $generic
      */
@@ -29,6 +35,7 @@ class SkyCoin
 
         $httpClient = new HttpClient($ip, $port, $username, $password);
         $this->generic = new Generic($httpClient);
+        $this->wallet = new Wallet($httpClient);
     }
 
     /**
@@ -37,6 +44,14 @@ class SkyCoin
     public function generic(): Generic
     {
         return $this->generic;
+    }
+
+    /**
+     * @return \SkyCoin\Wallet
+     */
+    public function wallet(): Wallet
+    {
+        return $this->wallet;
     }
 
 
