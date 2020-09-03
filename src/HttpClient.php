@@ -60,7 +60,6 @@ class HttpClient
 
         //Set Complete Url
         $url .= $uri;
-
         $request = new Request($httpMethod, $url);
 
         //Set Request Headers
