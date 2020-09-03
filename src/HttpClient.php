@@ -68,7 +68,8 @@ class HttpClient
         //Set CSRF header if request is not GET
         if (strtoupper($httpMethod) != "GET") {
             $generic = new Generic($this);
-            $csrf = $generic->csrfToken();
+            $csrf = $generic->csrfToken()->payload()->get("csrf_token");
+           
             $request
                 ->headers()
                 ->set("X-CSRF-Token", $csrf);
