@@ -43,7 +43,7 @@ class HttpClient
      * @return \Exception|Exception
      * @throws SkyCoinException
      */
-    public function sendRequest(string $uri,  $params , array $headers = [], string $httpMethod = "POST")
+    public function sendRequest(string $uri, array $params = [], array $headers = [], string $httpMethod = "POST")
     {
         $url = null;
         //If port is given or not
@@ -69,7 +69,10 @@ class HttpClient
         //Set CSRF header if request is not GET
         if (strtoupper($httpMethod) != "GET") {
             $generic = new Generic($this);
-            $csrf = $generic->csrfToken()->payload()->get("csrf_token");
+            $csrf = $generic
+                ->csrfToken()
+                ->payload()
+                ->get("csrf_token");
 
             $request
                 ->headers()
@@ -82,7 +85,7 @@ class HttpClient
             ->set("Accept", "application/json");
 
         //Set Dynamic Headers
-        if (count($headers)>0) {
+        if (count($headers) > 0) {
 
             array_walk($headers, ['self', "setHeaders"], $request);
         } else {
@@ -101,6 +104,7 @@ class HttpClient
 
         //Send The Request
         $response = $request->send();
+
 
         // Check for Error
         $error = $response->payload()->get("error");

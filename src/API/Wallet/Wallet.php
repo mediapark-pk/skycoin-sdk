@@ -150,9 +150,20 @@ class Wallet
      * @return \Exception|\SkyCoin\Exception
      * @throws \SkyCoin\Exception\SkyCoinException
      */
-    public function createTransaction($params)
+    public function createTransaction(array $params)
     {
         return $this->client->sendRequest("/wallet/transaction", $params, []);
+    }
+
+    /**
+     * @param array $params
+     * @return \Exception|\SkyCoin\Exception
+     * @throws \SkyCoin\Exception\SkyCoinException
+     */
+    public function signTransaction(array $params)
+    {
+        return $this->client->sendRequest("/wallet/transaction/sign", $params, []);
+
     }
 
 
