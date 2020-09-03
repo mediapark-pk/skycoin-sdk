@@ -4,6 +4,7 @@ declare(strict_type=1);
 namespace SkyCoin;
 
 
+use SkyCoin\API\Generic;
 use SkyCoin\Exception\SkyCoinException;
 use Comely\Http\Request;
 
@@ -44,6 +45,8 @@ class HttpClient
      */
     public function sendRequest(string $uri, array $params = [], array $headers = [], string $httpMethod = "POST")
     {
+
+
         $url = null;
         //If port is given or not
         if ($this->port) {
@@ -62,15 +65,27 @@ class HttpClient
         $url .= $uri;
         $request = new Request($httpMethod, $url);
 
+        //Set CSRF header if request is not GET
+        if (strtoupper($httpMethod) != "GET") {
+            $generic = new Generic($this);
+            $csrf = $generic->csrfToken();
+            $request
+                ->headers()
+                ->set("X-CSRF-Token", $csrf);
+        }
+
         //Set Request Headers
         $request
             ->headers()
-            ->set("Content-Type", "application/json")
             ->set("Accept", "application/json");
 
         //Set Dynamic Headers
         if ($headers) {
             array_walk($headers, ['self', "setHeaders"], $request);
+        } else {
+            $request
+                ->headers()
+                ->set("Content-Type", "application/json");
         }
 
         //Set Request Body/Params
