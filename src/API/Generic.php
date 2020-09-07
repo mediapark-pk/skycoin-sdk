@@ -28,6 +28,6 @@ class Generic
      */
     public function csrfToken()
     {
-        return $this->client->sendRequest("/csrf", [], [], "GET");
+        return $this->client->sendRequest("/v1/csrf", [], [], "GET");
     }
 }
