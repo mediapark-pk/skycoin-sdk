@@ -23,7 +23,7 @@ class Transaction
      * @throws \SkyCoin\Exception\SkyCoinException
      */
     public function pendingTxs(string $params=''){
-        return $this->client->sendRequest("/pendingTxs?".$params, [], [], "GET");
+        return $this->client->sendRequest("/v1/pendingTxs?".$params, [], [], "GET");
     }
 
     /**
