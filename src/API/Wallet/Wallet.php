@@ -35,7 +35,7 @@ class Wallet
      */
     public function getWallet(string $queryString)
     {
-        return $this->client->sendRequest("/wallet?" . $queryString, [], [], "GET");
+        return $this->client->sendRequest("/v1/wallet?" . $queryString, [], [], "GET");
     }
 
 
@@ -48,7 +48,7 @@ class Wallet
     public function createWallet(array $params, array $headers)
     {
 
-        return $this->client->sendRequest("/wallet/create", $params, $headers);
+        return $this->client->sendRequest("/v1/wallet/create", $params, $headers);
     }
 
     /**
@@ -58,7 +58,7 @@ class Wallet
      */
     public function unconfirmedTransactions(string $queryString)
     {
-        return $this->client->sendRequest("/wallet/transactions?" . $queryString, [], [], "GET");
+        return $this->client->sendRequest("/v1/wallet/transactions?" . $queryString, [], [], "GET");
     }
 
 
@@ -68,7 +68,7 @@ class Wallet
      */
     public function wallets()
     {
-        return $this->client->sendRequest("/wallets", [], [], "GET");
+        return $this->client->sendRequest("/v1/wallets", [], [], "GET");
     }
 
     /**
@@ -77,7 +77,7 @@ class Wallet
      */
     public function folderName()
     {
-        return $this->client->sendRequest("/wallets/folderName", [], [], "GET");
+        return $this->client->sendRequest("/v1/wallets/folderName", [], [], "GET");
     }
 
 
@@ -85,9 +85,9 @@ class Wallet
      * @return \Exception|\SkyCoin\Exception
      * @throws \SkyCoin\Exception\SkyCoinException
      */
-    public function generateSeed() //skip
+    public function generateSeed()
     {
-        return $this->client->sendRequest("/wallet/newSeed", [], [], "GET");
+        return $this->client->sendRequest("/v1/wallet/newSeed", [], [], "GET");
     }
 
     /**
@@ -95,9 +95,9 @@ class Wallet
      * @return \Exception|\SkyCoin\Exception
      * @throws \SkyCoin\Exception\SkyCoinException
      */
-    public function verifySeed(array $params) //skip
+    public function verifySeed(array $params)
     {
-        return $this->client->sendRequest("/wallet/seed/verify", $params);
+        return $this->client->sendRequest("/v2/wallet/seed/verify", $params);
 
 
     }
@@ -111,7 +111,7 @@ class Wallet
     public function newAddress(array $params, array $headers)
     {
 
-        return $this->client->sendRequest("/wallet/newAddress", $params, $headers);
+        return $this->client->sendRequest("/v1/wallet/newAddress", $params, $headers);
     }
 
     /**
@@ -119,9 +119,9 @@ class Wallet
      * @return \Exception|\SkyCoin\Exception
      * @throws \SkyCoin\Exception\SkyCoinException
      */
-    public function scanAddress(array $params)
+    public function scanAddress(array $params,array $headers)
     {
-        return $this->client->sendRequest("/wallet/scan", $params);
+        return $this->client->sendRequest("/v1/wallet/scan", $params,$headers);
     }
 
     /**
@@ -132,7 +132,7 @@ class Wallet
      */
     public function changeWalletLabel(array $params, array $headers)
     {
-        return $this->client->sendRequest("/wallet/update", $params, $headers);
+        return $this->client->sendRequest("/v1/wallet/update", $params, $headers);
     }
 
     /**
@@ -142,7 +142,7 @@ class Wallet
      */
     public function walletBalance(string $queryString)
     {
-        return $this->client->sendRequest("/wallet/balance?" . $queryString, [], [], "GET");
+        return $this->client->sendRequest("/v1/wallet/balance?" . $queryString, [], [], "GET");
     }
 
     /**
@@ -152,7 +152,7 @@ class Wallet
      */
     public function createTransaction(array $params)
     {
-        return $this->client->sendRequest("/wallet/transaction", $params, []);
+        return $this->client->sendRequest("/v1/wallet/transaction", $params, []);
     }
 
     /**
@@ -162,7 +162,7 @@ class Wallet
      */
     public function signTransaction(array $params)
     {
-        return $this->client->sendRequest("/wallet/transaction/sign", $params, []);
+        return $this->client->sendRequest("/v2/wallet/transaction/sign", $params, []);
 
     }
 
@@ -175,7 +175,7 @@ class Wallet
      */
     public function unloadWallet(array $param, array $headers)
     {
-        return $this->client->sendRequest("/wallet/unload", $param, $headers);
+        return $this->client->sendRequest("/v1/wallet/unload", $param, $headers);
 
     }
 
@@ -187,7 +187,7 @@ class Wallet
      */
     public function encryptWallet(array $params, array $headers)
     {
-        return $this->client->sendRequest("/wallet/encrypt", $params, $headers);
+        return $this->client->sendRequest("/v1/wallet/encrypt", $params, $headers);
     }
 
     /**
@@ -198,7 +198,7 @@ class Wallet
      */
     public function decryptWallet(array $params, array $headers)
     {
-        return $this->client->sendRequest("/wallet/decrypt", $params, $headers);
+        return $this->client->sendRequest("/v1/wallet/decrypt", $params, $headers);
 
     }
 
@@ -210,7 +210,7 @@ class Wallet
      */
     public function walletSeed(array $params, array $headers)
     {
-        return $this->client->sendRequest("/wallet/seed", $params, $headers);
+        return $this->client->sendRequest("/v1/wallet/seed", $params, $headers);
     }
 
     /**
@@ -220,7 +220,7 @@ class Wallet
      */
     public function recoverBySeed($params)
     {
-        return $this->client->sendRequest("/wallet/recover", $params);
+        return $this->client->sendRequest("/v1/wallet/recover", $params);
 
 
     }
