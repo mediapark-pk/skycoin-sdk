@@ -32,16 +32,7 @@ class Transaction
      * @throws \SkyCoin\Exception\SkyCoinException
      */
     public function createTransaction(array $params){
-        return $this->client->sendRequest("/transaction", $params, []);
-    }
-
-    /**
-     * @param array $params
-     * @return \Exception|\SkyCoin\Exception
-     * @throws \SkyCoin\Exception\SkyCoinException
-     */
-    public function injectRawTransaction(array $params){
-        return $this->client->sendRequest("/transaction", $params, []);
+        return $this->client->sendRequest("/v2/transaction", $params, []);
     }
 
     /**
@@ -49,8 +40,20 @@ class Transaction
      * @return \Exception|\SkyCoin\Exception
      * @throws \SkyCoin\Exception\SkyCoinException
      */
+    public function getTransactions(string $params){
+        return $this->client->sendRequest("/v1/transactions?".$params, [], [], "GET");
+    }
+
     public function getTransaction(string $params){
-        return $this->client->sendRequest("/transaction?".$params, [], [], "GET");
+        return $this->client->sendRequest("/v2/transaction?".$params, [], [], "GET");
+    }
+
+    public function resendUnconfirmedTxns(array $params){
+        return $this->client->sendRequest("/v1/resendUnconfirmedTxns", $params, []);
+    }
+
+    public function verify(array $params){
+        return $this->client->sendRequest("v2/transaction/verify", $params, []);
     }
 
     /**
@@ -59,7 +62,16 @@ class Transaction
      * @throws \SkyCoin\Exception\SkyCoinException
      */
     public function getRawTransaction(string $params){
-        return $this->client->sendRequest("/transaction?".$params, [], [], "GET");
+        return $this->client->sendRequest("/v1/rawtx?".$params, [], [], "GET");
+    }
+
+    /**
+     * @param $params
+     * @return \Exception|\SkyCoin\Exception
+     * @throws \SkyCoin\Exception\SkyCoinException
+     */
+    public function injectTransaction($params){
+        return $this->client->sendRequest("/v1/injectTransaction", $params, []);
     }
 
 }

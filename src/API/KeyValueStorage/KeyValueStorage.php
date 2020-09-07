@@ -21,7 +21,7 @@ class KeyValueStorage
         $this->client = $client;
     }
 
-//    public function getAllStorage(string $params){
-//        return $this->client->sendRequest("/data?".$params, [], []);
-//    }
+    public function getAllStorage(string $params){
+        return $this->client->sendRequest("/data?".$params, [], []);
+    }
 }
