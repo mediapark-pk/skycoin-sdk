@@ -42,13 +42,11 @@ class SkyCoin
     private Wallet $wallet;
 
     /**
-
      * @var Network
      */
     private Network $network;
 
     /**
-
      * @var GeneralSystem
      */
     private GeneralSystem $generalsystem;
@@ -83,8 +81,8 @@ class SkyCoin
      * @var Transaction
      */
     private Transaction $transaction;
-    /**
 
+    /**
      * SkyCoin constructor.
      * @param Generic $generic
      */
@@ -124,16 +122,17 @@ class SkyCoin
     }
 
     /**
-
      * @return Network
      */
     public function network(): Network
     {
         return $this->network;
+    }
 
+    /**
      * @return GeneralSystem
      */
-    public function genralsystem():GeneralSystem
+    public function genralsystem(): GeneralSystem
     {
         return $this->generalsystem;
     }
@@ -141,7 +140,7 @@ class SkyCoin
     /**
      * @return SimpleQuery
      */
-    public function simpleQuery():SimpleQuery
+    public function simpleQuery(): SimpleQuery
     {
         return $this->simplequery;
     }
@@ -149,7 +148,7 @@ class SkyCoin
     /**
      * @return KeyValueStorage
      */
-    public function keyvalueStorage():KeyValueStorage
+    public function keyvalueStorage(): KeyValueStorage
     {
         return $this->keyvalueStorage;
     }
@@ -157,7 +156,7 @@ class SkyCoin
     /**
      * @return Transaction
      */
-    public function tranaction():Transaction
+    public function tranaction(): Transaction
     {
         return $this->transaction;
     }
@@ -165,7 +164,7 @@ class SkyCoin
     /**
      * @return Blocks
      */
-    public function blocks():Blocks
+    public function blocks(): Blocks
     {
         return $this->blocks;
     }
@@ -173,7 +172,7 @@ class SkyCoin
     /**
      * @return Uxout
      */
-    public function uxout():Uxout
+    public function uxout(): Uxout
     {
         return $this->uxout;
     }
@@ -182,7 +181,7 @@ class SkyCoin
     /**
      * @return coinSupply
      */
-    public function coinSupply():coinSupply
+    public function coinSupply(): coinSupply
     {
         return $this->coinSupply;
 

@@ -66,17 +66,22 @@ class HttpClient
         $request = new Request($httpMethod, $url);
 
         //Set CSRF header if request is not GET
-        if (strtoupper($httpMethod) != "GET") {
-            $generic = new Generic($this);
-            $csrf = $generic
-                ->csrfToken()
-                ->payload()
-                ->get("csrf_token");
+//        if (strtoupper($httpMethod) != "GET") {
+//            $generic = new Generic($this);
+//            $csrf = $generic
+//                ->csrfToken()
+//                ->payload()
+//                ->get("csrf_token");
+//
+//            $request
+//                ->headers()
+//                ->set("X-CSRF-Token", $csrf);
+//        }
 
-            $request
-                ->headers()
-                ->set("X-CSRF-Token", $csrf);
-        }
+        //HardCode For Testing Purpose
+        $request
+            ->headers()
+            ->set("X-CSRF-Token", "eyJOb25jZSI6IkNXK2lEUkFyTExja0NzZFIwYVdhQWZveXcydEJrTXdlZkw1ZXJwS3lGWUdySzM1eUFXaCtlcWE0YW0rZHNEdzBKbGNNR3ZSTUhMb3B1OXJibVVBeUxnPT0iLCJFeHBpcmVzQXQiOiIyMDIwLTA5LTA0VDExOjQxOjM5Ljg4Nzg5MTY0OVoifQ.wt9_uOYvhS0T_84SG-pNfj87iW4ufcUmAg2ytLIQNkE");
 
         //Set Request Headers
         $request
@@ -97,6 +102,7 @@ class HttpClient
         $params ? $request->payload()->use($params) : null;
 
         $request = $request->curl();
+
 
         //Set Basic Authentication
 //        $request->auth()->basic($this->username, $this->password);

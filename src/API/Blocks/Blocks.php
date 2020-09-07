@@ -6,8 +6,15 @@ namespace SkyCoin\API\Blocks;
 
 use SkyCoin\HttpClient;
 
+/**
+ * Class Blocks
+ * @package SkyCoin\API\Blocks
+ */
 class Blocks
 {
+    /**
+     * @var HttpClient
+     */
     private HttpClient $client;
 
     /**
@@ -56,6 +63,17 @@ class Blocks
     public function lastnBlocks(string $params)
     {
         return $this->client->sendRequest("/last_blocks?".$params, [], [], "GET");
+    }
+
+    /**
+     * @return \Exception|\SkyCoin\Exception
+     * @throws \SkyCoin\Exception\SkyCoinException
+     */
+    public function blockMetaData()
+    {
+        return $this->client->sendRequest("/blockchain/metadata", [], [], "GET");
+
+
     }
 
 }

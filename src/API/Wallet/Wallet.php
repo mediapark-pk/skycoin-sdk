@@ -130,7 +130,7 @@ class Wallet
      * @return \Exception|\SkyCoin\Exception
      * @throws \SkyCoin\Exception\SkyCoinException
      */
-    public function walletUpdate(array $params, array $headers)
+    public function changeWalletLabel(array $params, array $headers)
     {
         return $this->client->sendRequest("/wallet/update", $params, $headers);
     }
@@ -198,7 +198,7 @@ class Wallet
      */
     public function decryptWallet(array $params, array $headers)
     {
-        return $this->client->sendRequest("/wallet/encrypt", $params, $headers);
+        return $this->client->sendRequest("/wallet/decrypt", $params, $headers);
 
     }
 
