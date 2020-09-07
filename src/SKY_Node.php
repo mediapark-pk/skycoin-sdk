@@ -25,7 +25,13 @@ class SKY_Node extends AbstractNodeServer
 
     public function ping(): void
     {
-
+        try {
+            $this->command([$this->_bitcoind, "version"]);
+        } catch (\Exception $e) {
+            throw new \AppException(
+                sprintf('Failed to ping %s node server %d', $this->node->coin, $this->node->id)
+            );
+        }
     }
 
     public function createAddress(?string $password = null): string
@@ -61,6 +67,28 @@ class SKY_Node extends AbstractNodeServer
     public function archiveTx(Transaction $transaction, ?MatchedAddressesArray $matchedAddresses = null, bool $reIndex = true): bool
     {
         // TODO: Implement archiveTx() method.
+    }
+
+    /**
+     * @param callable $callable
+     * @param array|null $args
+     * @return mixed
+     */
+    protected function command(callable $callable, ?array $args = null)
+    {
+        $app = \App::getInstance();
+        try {
+            return call_user_func_array($callable, $args ?? []);
+        } catch (\Exception $e) {
+            if ($app->dev()) {
+                trigger_error(
+                    $e instanceof \AppException ? $e->getMessage() : \App::Exception2Str($e),
+                    E_USER_WARNING);
+            }
+
+            throw new \AppException(sprintf('[%s]: %s', $this->node->coin, $e->getMessage()));
+            //throw new \AppException(sprintf('%s daemon command failed', $this->node->coin));
+        }
     }
 
 }

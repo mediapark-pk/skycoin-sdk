@@ -1,7 +1,9 @@
 <?php
 
 namespace SkyCoin\API;
+
 use SkyCoin\HttpClient;
+
 /**
  * Class Generic
  * @package SkyCoin
@@ -29,5 +31,15 @@ class Generic
     public function csrfToken()
     {
         return $this->client->sendRequest("/v1/csrf", [], [], "GET");
+    }
+
+    /**
+     * @return \Exception|\SkyCoin\Exception
+     * @throws \SkyCoin\Exception\SkyCoinException
+     */
+    public function version()
+    {
+        return $this->client->sendRequest("/v1/version", [], [], "GET");
+
     }
 }
