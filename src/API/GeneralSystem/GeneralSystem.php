@@ -27,7 +27,7 @@ class GeneralSystem
      * @throws \SkyCoin\Exception\SkyCoinException
      */
     public function healthCheck(){
-        return $this->client->sendRequest("/health", [], [], "GET");
+        return $this->client->sendRequest("/v1/health", [], [], "GET");
     }
 
     /**
@@ -35,6 +35,6 @@ class GeneralSystem
      * @throws \SkyCoin\Exception\SkyCoinException
      */
     public function versionInfo(){
-        return $this->client->sendRequest("/version", [], [], "GET");
+        return $this->client->sendRequest("/v1/version", [], [], "GET");
     }
 }

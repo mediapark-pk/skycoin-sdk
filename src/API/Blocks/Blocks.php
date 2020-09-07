@@ -32,7 +32,7 @@ class Blocks
      */
     public function getBlocks(string $params)
     {
-        return $this->client->sendRequest("/blocks?".$params, [], [], "GET");
+        return $this->client->sendRequest("/v1/blocks?".$params, [], [], "GET");
     }
 
     /**
@@ -42,7 +42,7 @@ class Blocks
      */
     public function getblockchain(string $params)
     {
-        return $this->client->sendRequest("/blockchain/".$params, [], [], "GET");
+        return $this->client->sendRequest("/v1/blockchain/".$params, [], [], "GET");
     }
 
     /**
@@ -52,7 +52,7 @@ class Blocks
      */
     public function getBlock(string $params)
     {
-        return $this->client->sendRequest("/block?".$params, [], [], "GET");
+        return $this->client->sendRequest("/v1/block?".$params, [], [], "GET");
     }
 
     /**
@@ -62,7 +62,7 @@ class Blocks
      */
     public function lastnBlocks(string $params)
     {
-        return $this->client->sendRequest("/last_blocks?".$params, [], [], "GET");
+        return $this->client->sendRequest("/v1/last_blocks?".$params, [], [], "GET");
     }
 
     /**
@@ -71,9 +71,7 @@ class Blocks
      */
     public function blockMetaData()
     {
-        return $this->client->sendRequest("/blockchain/metadata", [], [], "GET");
-
-
+        return $this->client->sendRequest("/v1/blockchain/metadata", [], [], "GET");
     }
 
 }

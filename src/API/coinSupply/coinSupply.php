@@ -23,7 +23,7 @@ class coinSupply
      * @throws \SkyCoin\Exception\SkyCoinException
      */
     public function coinSupply(){
-        return $this->client->sendRequest("/coinSupply", [], [], "GET");
+        return $this->client->sendRequest("/v1/coinSupply", [], [], "GET");
     }
 
     /**
@@ -32,7 +32,7 @@ class coinSupply
      * @throws \SkyCoin\Exception\SkyCoinException
      */
     public function richlist(string $params){
-        return $this->client->sendRequest("/richlist?".$params, [], [], "GET");
+        return $this->client->sendRequest("/v1/richlist?".$params, [], [], "GET");
     }
 
     /**
@@ -40,7 +40,7 @@ class coinSupply
      * @throws \SkyCoin\Exception\SkyCoinException
      */
     public function addresscount(){
-        return $this->client->sendRequest("/addresscount", [], [], "GET");
+        return $this->client->sendRequest("/v1/addresscount", [], [], "GET");
     }
 
 

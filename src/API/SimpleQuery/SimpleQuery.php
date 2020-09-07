@@ -25,7 +25,7 @@ class SimpleQuery
      * @throws \SkyCoin\Exception\SkyCoinException
      */
     public function getBalance(string $addresses){
-        return $this->client->sendRequest("/balance?".$addresses, [], [], "GET");
+        return $this->client->sendRequest("/v1/balance?".$addresses, [], [], "GET");
     }
 
     /**
@@ -34,7 +34,7 @@ class SimpleQuery
      * @throws \SkyCoin\Exception\SkyCoinException
      */
     public function getUnspent(string $addresses){
-        return $this->client->sendRequest("/outputs?".$addresses, [], [], "GET");
+        return $this->client->sendRequest("/v1/outputs?".$addresses, [], [], "GET");
     }
 
 }

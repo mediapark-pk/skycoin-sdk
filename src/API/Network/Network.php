@@ -33,7 +33,7 @@ class Network
      */
     public function networkConnection(string $queryString)
     {
-        return $this->client->sendRequest("/network/connection?" . $queryString, [], [], "GET");
+        return $this->client->sendRequest("/v1/network/connection?" . $queryString, [], [], "GET");
     }
 
     /**
@@ -43,7 +43,7 @@ class Network
      */
     public function networkConnections()
     {
-        return $this->client->sendRequest("/network/connections", [], [], "GET");
+        return $this->client->sendRequest("/v1/network/connections", [], [], "GET");
 
     }
 
@@ -53,7 +53,7 @@ class Network
      */
     public function defaultConnections()
     {
-        return $this->client->sendRequest("/network/defaultConnections", [], [], "GET");
+        return $this->client->sendRequest("/v1/network/defaultConnections", [], [], "GET");
     }
 
     /**
@@ -62,7 +62,7 @@ class Network
      */
     public function trustedConnections()
     {
-        return $this->client->sendRequest("/network/connections/trust", [], [], "GET");
+        return $this->client->sendRequest("/v1/network/connections/trust", [], [], "GET");
 
     }
 
@@ -72,7 +72,7 @@ class Network
      */
     public function networkByPeerExchange()
     {
-        return $this->client->sendRequest("/network/connections/exchange", [], [], "GET");
+        return $this->client->sendRequest("/v1/network/connections/exchange", [], [], "GET");
     }
 
 
@@ -83,7 +83,7 @@ class Network
      */
     public function disconnectNetwork(string $queryString)
     {
-        return $this->client->sendRequest("/network/connection/disconnect?" . $queryString, []);
+        return $this->client->sendRequest("/v1/network/connection/disconnect?" . $queryString, []);
     }
 
 
