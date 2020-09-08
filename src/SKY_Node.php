@@ -19,7 +19,13 @@ use SkyCoin\API\Generic;
 class SKY_Node extends AbstractNodeServer
 {
 
+
     /**
+     * @var \SkyCoin\SkyCoin
+     */
+    public \SkyCoin\SkyCoin $_skycoin;
+    /**
+     * @return \SkyCoin\SkyCoin
      */
     public function skycoin(): \SkyCoin\SkyCoin
     {
