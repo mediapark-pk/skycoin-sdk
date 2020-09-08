@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace SkyCoin;
 
-use App\Coins\Wallets\Transaction;
+use \App\src\Transaction;
 use App\Coins\Wallets\Wallet;
 use App\Models\Arrays\MatchedAddressesArray;
 use App\User\User;
