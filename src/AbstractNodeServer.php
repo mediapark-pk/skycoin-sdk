@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace SkyCoin;
 
 
-use SkyCoin\Wallet;
 use \App\src\Transaction;
+use SkyCoin\Wallet;
 use App\Models\Arrays\MatchedAddressesArray;
 use App\User\User;
 

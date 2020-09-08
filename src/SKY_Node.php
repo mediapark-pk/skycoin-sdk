@@ -5,10 +5,11 @@ namespace SkyCoin;
 
 
 use \App\src\Transaction;
-use App\Coins\Wallets\Wallet;
+
 use App\Models\Arrays\MatchedAddressesArray;
 use App\User\User;
 use SkyCoin\SkyCoin;
+use SkyCoin\Wallet;
 use SkyCoin\API\Generic;
 
 /**
@@ -18,11 +19,7 @@ use SkyCoin\API\Generic;
 class SKY_Node extends AbstractNodeServer
 {
 
-    /** @var \SkyCoin\SkyCoin */
-    private $_skycoin;
-
     /**
-     * @return \SkyCoin\SkyCoin
      */
     public function skycoin(): \SkyCoin\SkyCoin
     {
@@ -65,7 +62,7 @@ class SKY_Node extends AbstractNodeServer
      */
     public function generateWallet(array $args): Wallet
     {
-        // Make sure that server is online
+// Make sure that server is online
         if (!$this->isOnline()) {
             throw new \AppException('Node daemon/server is not online');
         }
@@ -102,14 +99,14 @@ class SKY_Node extends AbstractNodeServer
             throw new \AppException('No new Bitcoin wallets are available');
         }
 
-        // Check status is open
+// Check status is open
         if ($this->node->status !== 'open') {
             throw $this->exception('Node server status not open');
         } elseif (!$this->node->checksumVerified) {
             throw $this->exception('Node checksum not validated');
         }
 
-        // Bring some random unassigned wallets
+// Bring some random unassigned wallets
         $randomWalletsQuery = sprintf(
             "SELECT" . " * FROM `%s` WHERE `coin`='%s' AND `user` IS NULL ORDER BY RAND() LIMIT 10",
             Wallets::NAME,
@@ -126,7 +123,7 @@ class SKY_Node extends AbstractNodeServer
         $wallet = new \App\Coins\Wallets\Wallet($randomWallet);
         $wallet->bootstrap();
 
-        // Obtain lock
+// Obtain lock
         $checksum = $wallet->private("checksum");
         if (!$checksum) {
             throw $this->exception(sprintf('pre-allocated wallet %d checksum is invalid', $wallet->id));
@@ -137,14 +134,14 @@ class SKY_Node extends AbstractNodeServer
             throw $this->exception(sprintf('failed to obtain lock on wallet %d', $wallet->id));
         }
 
-        // Validate wallet
+// Validate wallet
         try {
             $wallet->validate();
         } catch (\AppException $e) {
             throw $this->exception($e->getMessage());
         }
 
-        // Verify Wallet Passphrase
+// Verify Wallet Passphrase
         try {
             $allocatingWalletOnNode = $this->skycoin()->wallets()->get($wallet->wallet);
             sleep(1);
@@ -168,7 +165,7 @@ class SKY_Node extends AbstractNodeServer
             throw $this->exception(sprintf('Wallet %d could not be verified', $wallet->id));
         }
 
-        // Allocate Wallet
+// Allocate Wallet
         $wallet->status = 'active';
         $wallet->user = $user->id;
         $wallet->userLabel = $label;
@@ -184,7 +181,7 @@ class SKY_Node extends AbstractNodeServer
             throw $this->exception(sprintf('failed to allocated wallet %d to user', $wallet->id));
         }
 
-        // Create Primary Address
+// Create Primary Address
         try {
             Wallets\Addresses::create($wallet, "Primary", $user);
         } catch (\Exception $e) {
@@ -263,6 +260,10 @@ class SKY_Node extends AbstractNodeServer
         return is_string($addr) && $addr ? true : false;
     }
 
+    /**
+     * @param string $args
+     * @return Transaction
+     */
     public function transaction(string $args): Transaction
     {
         $data = $this->command([$this->_skycoin->tranaction(), "getTransaction"], $args);
@@ -277,6 +278,10 @@ class SKY_Node extends AbstractNodeServer
         return $trans;
     }
 
+    /**
+     * @param int|null $confirmations
+     * @return string|null
+     */
     public function walletBalance(?int $confirmations = 0): ?string
     {
         if ($this->wallet->coin === "SKY") {
@@ -301,6 +306,12 @@ class SKY_Node extends AbstractNodeServer
         return $balance;
     }
 
+    /**
+     * @param int|null $confirmations
+     * @param string|null $units
+     * @param string|null $address
+     * @return string
+     */
     public function balance(?int $confirmations = null, ?string $units = null, ?string $address = null): string
     {
         if ($units && $units !== $this->node->coin) {
@@ -314,14 +325,28 @@ class SKY_Node extends AbstractNodeServer
         return $this->walletBalance($confirmations);
     }
 
+    /**
+     * @param array $inputs
+     * @param array $outputs
+     * @param string|null $units
+     * @param string|null $fee
+     * @param string|null $memo
+     * @return string
+     */
     public function send(array $inputs, array $outputs, ?string $units = null, ?string $fee = null, ?string $memo = null): string
     {
-        // TODO: Implement send() method.
+// TODO: Implement send() method.
     }
 
+    /**
+     * @param Transaction $transaction
+     * @param MatchedAddressesArray|null $matchedAddresses
+     * @param bool $reIndex
+     * @return bool
+     */
     public function archiveTx(Transaction $transaction, ?MatchedAddressesArray $matchedAddresses = null, bool $reIndex = true): bool
     {
-        // TODO: Implement archiveTx() method.
+// TODO: Implement archiveTx() method.
     }
 
     /**
@@ -342,7 +367,7 @@ class SKY_Node extends AbstractNodeServer
             }
 
             throw new \AppException(sprintf('[%s]: %s', $this->node->coin, $e->getMessage()));
-            //throw new \AppException(sprintf('%s daemon command failed', $this->node->coin));
+//throw new \AppException(sprintf('%s daemon command failed', $this->node->coin));
         }
     }
 
