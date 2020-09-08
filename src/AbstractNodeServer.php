@@ -16,6 +16,7 @@ abstract class AbstractNodeServer
 {
     public const SPEND_REQUIRE_PAYER = null;
     public const SPEND_MAX_PAYEES = null;
+    public const DEFAULT_MAX_ADDRESSES_LIMIT = 1000;
 
     /** @var \App */
     protected $app;
@@ -23,6 +24,7 @@ abstract class AbstractNodeServer
     protected $node;
     /** @var null|Wallet */
     protected $wallet;
+
 
     /**
      * AbstractNodeServer constructor.

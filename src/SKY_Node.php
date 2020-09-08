@@ -8,7 +8,7 @@ use App\Coins\Wallets\Transaction;
 use App\Coins\Wallets\Wallet;
 use App\Models\Arrays\MatchedAddressesArray;
 use App\User\User;
-use BitcoinRPC\BitcoinRPC;
+use SkyCoin\SkyCoin;
 use SkyCoin\API\Generic;
 
 /**
@@ -18,6 +18,16 @@ use SkyCoin\API\Generic;
 class SKY_Node extends AbstractNodeServer
 {
 
+    /** @var \SkyCoin\SkyCoin */
+    private $_skycoin;
+
+    /**
+     * @return \SkyCoin\SkyCoin
+     */
+    public function skycoin(): \SkyCoin\SkyCoin
+    {
+        return $this->_skycoin;
+    }
 
     /**
      * @param Wallet $wallet
@@ -29,6 +39,51 @@ class SKY_Node extends AbstractNodeServer
         return $this;
     }
 
+    /**
+     * @param bool|false $load
+     * @return Wallet
+     */
+    public function skycoinWallet(bool $load = false): Wallet
+    {
+        if (!$this->wallet) {
+            throw new \AppException('No wallet selected');
+        }
+
+        $wallet = $this->skycoin()->wallets()
+            ->get($this->wallet->wallet);
+        if ($load && !$wallet->isLoaded(true)) {
+            $wallet->load();
+        }
+
+        return $wallet;
+    }
+
+
+    /**
+     * @param array $args
+     * @return Wallet
+     */
+    public function generateWallet(array $args): Wallet
+    {
+        // Make sure that server is online
+        if (!$this->isOnline()) {
+            throw new \AppException('Node daemon/server is not online');
+        }
+
+        try {
+            $this->command([$this->_skycoin->wallet(), "createWallet"], $args);
+        } catch (\Exception $e) {
+            throw new \AppException(
+                sprintf('Failed to ping %s node server %d', $this->node->coin, $this->node->id)
+            );
+        }
+    }
+
+    /**
+     * @param User $user
+     * @param string $label
+     * @return Wallet
+     */
     public function allocateWallet(User $user, string $label): Wallet
     {
         $db = $this->app->db();
@@ -84,7 +139,7 @@ class SKY_Node extends AbstractNodeServer
 
         // Verify Wallet Passphrase
         try {
-            $allocatingWalletOnNode = $this->bitcoind()->wallets()->get($wallet->wallet);
+            $allocatingWalletOnNode = $this->skycoin()->wallets()->get($wallet->wallet);
             sleep(1);
             $allocatingWalletOnNode->load();
             sleep(2);
@@ -95,7 +150,7 @@ class SKY_Node extends AbstractNodeServer
             }
         } catch (\Exception $e) {
             if ($this->app->dev()) {
-                $lastCommandError = $this->bitcoind()->jsonRPC_client()->lastCommandError();
+                $lastCommandError = $this->skycoin()->jsonRPC_client()->lastCommandError();
                 if ($lastCommandError) {
                     trigger_error($lastCommandError->message, E_USER_WARNING);
                 }
@@ -137,10 +192,13 @@ class SKY_Node extends AbstractNodeServer
         return $wallet;
     }
 
+    /**
+     *
+     */
     public function ping(): void
     {
         try {
-            $this->command([$this->_bitcoind, "version"]);
+            $this->command([$this->_skycoin->generic(), "version"]);
         } catch (\Exception $e) {
             throw new \AppException(
                 sprintf('Failed to ping %s node server %d', $this->node->coin, $this->node->id)
@@ -148,9 +206,39 @@ class SKY_Node extends AbstractNodeServer
         }
     }
 
+    /**
+     * @param int $maxAttempts
+     * @param int $interval
+     * @return bool
+     */
+    public function isOnline(int $maxAttempts = 10, int $interval = 2): bool
+    {
+        $attempt = 0;
+        while (true) {
+            $attempt++;
+
+            try {
+                $this->ping();
+                return true;
+            } catch (\Exception $e) {
+                if ($attempt > $maxAttempts) {
+                    break;
+                }
+
+                sleep($interval);
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param string|null $password
+     * @return string
+     */
     public function createAddress(?string $password = null): string
     {
-        $address = $this->command([$this->bitcoinWallet(), "getNewAddress"]);
+        $address = $this->command([$this->skycoinWallet(), "newAddress"]);
         if (!is_string($address) || !$address) {
             throw new \AppException('Failed to generate bitcoind address');
         }
@@ -158,6 +246,10 @@ class SKY_Node extends AbstractNodeServer
         return $address;
     }
 
+    /**
+     * @param string $addr
+     * @return bool
+     */
     public function isValidAddress(string $addr): bool
     {
         return is_string($addr) && $addr ? true : false;
@@ -170,6 +262,9 @@ class SKY_Node extends AbstractNodeServer
 
     public function walletBalance(?int $confirmations = 0): ?string
     {
+        if ($this->wallet->coin === "SKY") {
+            return null;
+        }
         if ($this->wallet->coin === "LBTC") {
             return null;
         }
@@ -181,7 +276,7 @@ class SKY_Node extends AbstractNodeServer
             $args = null;
         }
 
-        $balance = $this->command([$this->bitcoinWallet(), "walletBalance"], $args);
+        $balance = $this->command([$this->skycoinWallet(), "walletBalance"], $args);
         if (!Validator::BcAmount($balance, true)) {
             throw new \AppException('Failed to retrieve wallet balance');
         }
