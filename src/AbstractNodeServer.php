@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace SkyCoin;
 
 use App\Coins\Wallets\Transaction;
-use App\Coins\Wallets\Wallet;
+use SkyCoin\Wallet;
 use App\Models\Arrays\MatchedAddressesArray;
 use App\User\User;
 
@@ -86,10 +86,10 @@ abstract class AbstractNodeServer
     abstract public function ping(): void;
 
     /**
-     * @param null|string $password
+     * @param null|array $args
      * @return string
      */
-    abstract public function createAddress(?string $password = null): string;
+    abstract public function createAddress(array $args): string;
 
     /**
      * @param string $addr

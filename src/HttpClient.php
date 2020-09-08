@@ -112,12 +112,31 @@ class HttpClient
         $response = $request->send();
 
 
+        $errorCode = $response->code();
+        if ($errorCode != 200) {
+
+            if ($errorCode == 400) {
+                $errorMessage = $error["message"] ?? 'Bad Request';
+            } elseif ($errorCode == 401) {
+                $errorMessage = $error["message"] ?? 'Unauthorized';
+            } else if ($errorCode == 404) {
+                $errorMessage = $error["message"] ?? 'Not Found';
+            } else {
+                $errorMessage = $error["message"] ?? 'An error occurred';
+            }
+
+            throw new SkyCoinException($errorMessage, $errorCode);
+        }
+
         // Check for Error
         $error = $response->payload()->get("error");
         if (is_array($error)) {
 
             $errorCode = intval($error["code"] ?? 0);
+
+
             $errorMessage = $error["message"] ?? 'An error occurred';
+
             throw new SkyCoinException($errorMessage, $errorCode);
         }
         // Result
