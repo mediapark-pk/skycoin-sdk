@@ -255,9 +255,9 @@ class SKY_Node extends AbstractNodeServer
         return is_string($addr) && $addr ? true : false;
     }
 
-    public function transaction(string $txId): Transaction
+    public function transaction(string $args): Transaction
     {
-        // TODO: Implement transaction() method.
+        $this->command([$this->_skycoin->tranaction(), "getTransaction"], $args);
     }
 
     public function walletBalance(?int $confirmations = 0): ?string
