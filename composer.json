@@ -1,6 +1,6 @@
 {
   "require": {
-    "comely-io/http": "1.0.47"
+    "comely-io/http": "^1.0.47"
   },
   "autoload": {
     "psr-4": {
