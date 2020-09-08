@@ -4,11 +4,13 @@
 namespace SkyCoin;
 
 
+
 use \App\src\Transaction;
-use App\Coins\Wallets\Wallet;
+
 use App\Models\Arrays\MatchedAddressesArray;
 use App\User\User;
 use SkyCoin\SkyCoin;
+use SkyCoin\Wallet;
 use SkyCoin\API\Generic;
 
 /**
@@ -71,18 +73,25 @@ class SKY_Node extends AbstractNodeServer
         }
 
         try {
-            $this->command([$this->_skycoin->wallet(), "createWallet"], $args);
+            $walletData = $this->command([$this->_skycoin->wallet(), "createWallet"], $args);
         } catch (\Exception $e) {
             throw new \AppException(
                 sprintf('Failed to ping %s node server %d', $this->node->coin, $this->node->id)
             );
         }
+
+        $wallet = new \SkyCoin\Wallet();
+        $wallet->meta = $walletData->payload()->get('meta');
+        $wallet->entries = $walletData->payload()->get('entries');
+
+        return $wallet;
     }
+
 
     /**
      * @param User $user
      * @param string $label
-     * @return Wallet
+     * @return \SkyCoin\Wallet
      */
     public function allocateWallet(User $user, string $label): Wallet
     {
@@ -232,13 +241,14 @@ class SKY_Node extends AbstractNodeServer
         return false;
     }
 
+
     /**
-     * @param string|null $password
+     * @param array $args
      * @return string
      */
-    public function createAddress(?string $password = null): string
+    public function createAddress(array $args): string
     {
-        $address = $this->command([$this->skycoinWallet(), "newAddress"]);
+        $address = $this->command([$this->skycoinWallet(), "newAddress"], $args);
         if (!is_string($address) || !$address) {
             throw new \AppException('Failed to generate bitcoind address');
         }
