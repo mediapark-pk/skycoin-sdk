@@ -4,12 +4,11 @@
 namespace SkyCoin;
 
 
-use App\Coins\Wallets\Transaction;
-
+use \App\src\Transaction;
+use App\Coins\Wallets\Wallet;
 use App\Models\Arrays\MatchedAddressesArray;
 use App\User\User;
 use SkyCoin\SkyCoin;
-use SkyCoin\Wallet;
 use SkyCoin\API\Generic;
 
 /**
@@ -264,9 +263,18 @@ class SKY_Node extends AbstractNodeServer
         return is_string($addr) && $addr ? true : false;
     }
 
-    public function transaction(string $txId): Transaction
+    public function transaction(string $args): Transaction
     {
-        // TODO: Implement transaction() method.
+        $data = $this->command([$this->_skycoin->tranaction(), "getTransaction"], $args);
+        $status = $data->payload()->get('status');
+        $time = $data->payload()->get('time');
+        $txn = $data->payload()->get('txn');
+        $trans = new Transaction($args);
+        $trans->time = $time;
+        $trans->block = $status['block_seq'];
+        $trans->inputs = $txn['inputs'];
+        $trans->outputs = $txn['outputs'];
+        return $trans;
     }
 
     public function walletBalance(?int $confirmations = 0): ?string

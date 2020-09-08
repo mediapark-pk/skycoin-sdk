@@ -44,8 +44,14 @@ class Transaction
         return $this->client->sendRequest("/v1/transactions?".$params, [], [], "GET");
     }
 
-    public function getTransaction(string $params){
-        return $this->client->sendRequest("/v2/transaction?".$params, [], [], "GET");
+    /**
+     * @param string $params
+     * @param int $param2
+     * @return \Exception|\SkyCoin\Exception
+     * @throws \SkyCoin\Exception\SkyCoinException
+     */
+    public function getTransaction(string $params,int $param2=0){
+        return $this->client->sendRequest("/v1/transaction?txid=".$params."&confirmed=".$param2, [], [], "GET");
     }
 
     public function resendUnconfirmedTxns(array $params){
