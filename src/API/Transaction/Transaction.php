@@ -48,9 +48,7 @@ class Transaction
             "change_address"=> $change_address,
             "to"=>$to
         );
-        $result =  ($this->client->sendRequest("/v2/transaction", $params, []))->payload();
-        print_r($result);exit;
-        $result =  (($this->client->sendRequest("/v2/transaction", $params, []))->payload())->get('data');
+        $result =  $this->client->sendRequest("/v2/transaction", $params, []);
         $transaction = new trans();
         $transaction->id = $result['transaction']['txid'];
         $transaction->fee = $result['transaction']['fee'];
@@ -81,12 +79,12 @@ class Transaction
      */
     public function getTransaction(string $params,int $param2=0) :trans
     {
-        $result = ($this->client->sendRequest("/v1/transaction?txid=".$params."&confirmed=".$param2, [], [], "GET"))->payload();
+        $result = $this->client->sendRequest("/v1/transaction?txid=".$params."&confirmed=".$param2, [], [], "GET");
         $transaction = new trans($params);
-        $transaction->confirmations = ($result->get('status'))['confirmed']??($result->get('status'))['unconfirmed'];
-        $transaction->inputs = ($result->get('txn'))['inputs']??array();
-        $transaction->outputs = ($result->get('txn'))['outputs']??array();
-        $transaction->time = ($result->get('time'))??'';
+        $transaction->confirmations = ($result['status'])['confirmed']??($result['status'])['unconfirmed'];
+        $transaction->inputs = ($result['txn'])['inputs']??array();
+        $transaction->outputs = ($result['txn'])['outputs']??array();
+        $transaction->time = ($result['time'])??'';
         return $transaction;
 
     }
@@ -97,11 +95,12 @@ class Transaction
      * @throws HttpException
      * @throws SkyCoinAPIException
      */
-    public function getRawTransaction(string $params) :trans
-    {
-        $data = $this->client->sendRequest("/v1/rawtx?txid=a6446654829a4a844add9f181949d12f8291fdd2c0fcb22200361e90e814e2d3", [], [], "GET");
-        return new trans($params);
-    }
+//    public function getRawTransaction(string $params) :trans
+//    {
+//        $data = $this->client->sendRequest("/v1/rawtx?txid=".$params, [], [], "GET");
+//        $tran = new \SkyCoin\Transaction();
+//        return $tran;
+//    }
 
     /**
      * @return trans
@@ -111,7 +110,7 @@ class Transaction
     public function resendUnconfirmedTxns(){
         $result = $this->client->sendRequest("/v1/resendUnconfirmedTxns", [], []);
         $transaction = new trans();
-        $transaction->unconfirmedTxids= $result->payload()->get('txids');
+        $transaction->unconfirmedTxids= $result['txids'];
         return $transaction;
     }
 
