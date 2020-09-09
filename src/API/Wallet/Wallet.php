@@ -4,7 +4,8 @@ declare(strict_types=1);
 namespace SkyCoin\API\Wallet;
 
 
-use http\Params;
+use Comely\Http\Exception\HttpException;
+use SkyCoin\Exception\SkyCoinAPIException;
 use SkyCoin\HttpClient;
 
 /**
@@ -14,13 +15,12 @@ use SkyCoin\HttpClient;
 class Wallet
 {
 
-    /**
-     * @var HttpClient
-     */
+    /*** @var HttpClient*/
     private HttpClient $client;
 
     /**
      * Generic constructor.
+     * @param HttpClient $client
      */
     public function __construct(HttpClient $client)
     {
@@ -30,8 +30,9 @@ class Wallet
 
     /**
      * @param string $queryString
-     * @return \Exception|\SkyCoin\Exception
-     * @throws \SkyCoin\Exception\SkyCoinException
+     * @return array
+     * @throws HttpException
+     * @throws SkyCoinAPIException
      */
     public function getWallet(string $queryString)
     {
@@ -40,13 +41,11 @@ class Wallet
 
 
     /**
-     * @param string $seed
-     * @param string $label
-     * @param string $password
-     * @param string $type
-     * @param int $scan
-     * @return \Exception|\SkyCoin\Exception
-     * @throws \SkyCoin\Exception\SkyCoinException
+     * @param $params
+     * @param $headers
+     * @return array
+     * @throws HttpException
+     * @throws SkyCoinAPIException
      */
     public function createWallet($params,$headers)
     {
@@ -56,8 +55,9 @@ class Wallet
 
     /**
      * @param string $queryString
-     * @return \Exception|\SkyCoin\Exception
-     * @throws \SkyCoin\Exception\SkyCoinException
+     * @return array
+     * @throws HttpException
+     * @throws SkyCoinAPIException
      */
     public function unconfirmedTransactions(string $queryString)
     {
@@ -66,8 +66,9 @@ class Wallet
 
 
     /**
-     * @return \Exception|\SkyCoin\Exception
-     * @throws \SkyCoin\Exception\SkyCoinException
+     * @return array
+     * @throws HttpException
+     * @throws SkyCoinAPIException
      */
     public function wallets()
     {
@@ -75,8 +76,9 @@ class Wallet
     }
 
     /**
-     * @return \Exception|\SkyCoin\Exception
-     * @throws \SkyCoin\Exception\SkyCoinException
+     * @return array
+     * @throws HttpException
+     * @throws SkyCoinAPIException
      */
     public function folderName()
     {
@@ -85,8 +87,9 @@ class Wallet
 
 
     /**
-     * @return \Exception|\SkyCoin\Exception
-     * @throws \SkyCoin\Exception\SkyCoinException
+     * @return array
+     * @throws HttpException
+     * @throws SkyCoinAPIException
      */
     public function generateSeed()
     {
@@ -95,8 +98,9 @@ class Wallet
 
     /**
      * @param array $params
-     * @return \Exception|\SkyCoin\Exception
-     * @throws \SkyCoin\Exception\SkyCoinException
+     * @return array
+     * @throws HttpException
+     * @throws SkyCoinAPIException
      */
     public function verifySeed(array $params)
     {
@@ -108,8 +112,9 @@ class Wallet
     /**
      * @param array $params
      * @param array $headers
-     * @return \Exception|\SkyCoin\Exception
-     * @throws \SkyCoin\Exception\SkyCoinException
+     * @return array
+     * @throws HttpException
+     * @throws SkyCoinAPIException
      */
     public function newAddress(array $params, array $headers)
     {
@@ -119,8 +124,10 @@ class Wallet
 
     /**
      * @param array $params
-     * @return \Exception|\SkyCoin\Exception
-     * @throws \SkyCoin\Exception\SkyCoinException
+     * @param array $headers
+     * @return array
+     * @throws HttpException
+     * @throws SkyCoinAPIException
      */
     public function scanAddress(array $params,array $headers)
     {
@@ -130,8 +137,9 @@ class Wallet
     /**
      * @param array $params
      * @param array $headers
-     * @return \Exception|\SkyCoin\Exception
-     * @throws \SkyCoin\Exception\SkyCoinException
+     * @return array
+     * @throws HttpException
+     * @throws SkyCoinAPIException
      */
     public function changeWalletLabel(array $params, array $headers)
     {
@@ -140,8 +148,9 @@ class Wallet
 
     /**
      * @param string $queryString
-     * @return \Exception|\SkyCoin\Exception
-     * @throws \SkyCoin\Exception\SkyCoinException
+     * @return array
+     * @throws HttpException
+     * @throws SkyCoinAPIException
      */
     public function walletBalance(string $queryString)
     {
@@ -150,8 +159,9 @@ class Wallet
 
     /**
      * @param array $params
-     * @return \Exception|\SkyCoin\Exception
-     * @throws \SkyCoin\Exception\SkyCoinException
+     * @return array
+     * @throws HttpException
+     * @throws SkyCoinAPIException
      */
     public function createTransaction(array $params)
     {
@@ -160,8 +170,9 @@ class Wallet
 
     /**
      * @param array $params
-     * @return \Exception|\SkyCoin\Exception
-     * @throws \SkyCoin\Exception\SkyCoinException
+     * @return array
+     * @throws HttpException
+     * @throws SkyCoinAPIException
      */
     public function signTransaction(array $params)
     {
@@ -173,8 +184,9 @@ class Wallet
     /**
      * @param array $param
      * @param array $headers
-     * @return \Exception|\SkyCoin\Exception
-     * @throws \SkyCoin\Exception\SkyCoinException
+     * @return array
+     * @throws HttpException
+     * @throws SkyCoinAPIException
      */
     public function unloadWallet(array $param, array $headers)
     {
@@ -185,8 +197,9 @@ class Wallet
     /**
      * @param array $params
      * @param array $headers
-     * @return \Exception|\SkyCoin\Exception
-     * @throws \SkyCoin\Exception\SkyCoinException
+     * @return array
+     * @throws HttpException
+     * @throws SkyCoinAPIException
      */
     public function encryptWallet(array $params, array $headers)
     {
@@ -196,8 +209,9 @@ class Wallet
     /**
      * @param array $params
      * @param array $headers
-     * @return \Exception|\SkyCoin\Exception
-     * @throws \SkyCoin\Exception\SkyCoinException
+     * @return array
+     * @throws HttpException
+     * @throws SkyCoinAPIException
      */
     public function decryptWallet(array $params, array $headers)
     {
@@ -208,8 +222,9 @@ class Wallet
     /**
      * @param array $params
      * @param array $headers
-     * @return \Exception|\SkyCoin\Exception
-     * @throws \SkyCoin\Exception\SkyCoinException
+     * @return array
+     * @throws HttpException
+     * @throws SkyCoinAPIException
      */
     public function walletSeed(array $params, array $headers)
     {
@@ -218,8 +233,9 @@ class Wallet
 
     /**
      * @param $params
-     * @return \Exception|\SkyCoin\Exception
-     * @throws \SkyCoin\Exception\SkyCoinException
+     * @return array
+     * @throws HttpException
+     * @throws SkyCoinAPIException
      */
     public function recoverBySeed($params)
     {

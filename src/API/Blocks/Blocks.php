@@ -2,8 +2,8 @@
 
 
 namespace SkyCoin\API\Blocks;
-
-
+use Comely\Http\Exception\HttpException;
+use SkyCoin\Exception\SkyCoinException;
 use SkyCoin\HttpClient;
 
 /**
@@ -12,13 +12,12 @@ use SkyCoin\HttpClient;
  */
 class Blocks
 {
-    /**
-     * @var HttpClient
-     */
+    /** @var HttpClient */
     private HttpClient $client;
 
     /**
      * Generic constructor.
+     * @param HttpClient $client
      */
     public function __construct(HttpClient $client)
     {
@@ -27,8 +26,8 @@ class Blocks
 
     /**
      * @param string $params
-     * @return \Exception|\SkyCoin\Exception
-     * @throws \SkyCoin\Exception\SkyCoinException
+     * @return array
+     * @throws SkyCoinException|HttpException
      */
     public function getBlocks(string $params)
     {
@@ -37,8 +36,8 @@ class Blocks
 
     /**
      * @param string $params
-     * @return \Exception|\SkyCoin\Exception
-     * @throws \SkyCoin\Exception\SkyCoinException
+     * @return array
+     * @throws SkyCoinException|HttpException
      */
     public function getblockchain(string $params)
     {
@@ -47,8 +46,8 @@ class Blocks
 
     /**
      * @param string $params
-     * @return \Exception|\SkyCoin\Exception
-     * @throws \SkyCoin\Exception\SkyCoinException
+     * @return array
+     * @throws SkyCoinException|HttpException
      */
     public function getBlock(string $params)
     {
@@ -57,8 +56,8 @@ class Blocks
 
     /**
      * @param string $params
-     * @return \Exception|\SkyCoin\Exception
-     * @throws \SkyCoin\Exception\SkyCoinException
+     * @return array
+     * @throws SkyCoinException|HttpException
      */
     public function lastnBlocks(string $params)
     {
@@ -66,8 +65,7 @@ class Blocks
     }
 
     /**
-     * @return \Exception|\SkyCoin\Exception
-     * @throws \SkyCoin\Exception\SkyCoinException
+     * @throws SkyCoinException|HttpException
      */
     public function blockMetaData()
     {

@@ -4,6 +4,8 @@
 namespace SkyCoin\API\Uxout;
 
 
+use Comely\Http\Exception\HttpException;
+use SkyCoin\Exception\SkyCoinAPIException;
 use SkyCoin\HttpClient;
 
 class Uxout
@@ -12,6 +14,7 @@ class Uxout
 
     /**
      * Generic constructor.
+     * @param HttpClient $client
      */
     public function __construct(HttpClient $client)
     {
@@ -20,8 +23,9 @@ class Uxout
 
     /**
      * @param string $params
-     * @return \Exception|\SkyCoin\Exception
-     * @throws \SkyCoin\Exception\SkyCoinException
+     * @return array
+     * @throws HttpException
+     * @throws SkyCoinAPIException
      */
     public function uxout(string $params)
     {
@@ -30,8 +34,9 @@ class Uxout
 
     /**
      * @param string $params
-     * @return \Exception|\SkyCoin\Exception
-     * @throws \SkyCoin\Exception\SkyCoinException
+     * @return array
+     * @throws HttpException
+     * @throws SkyCoinAPIException
      */
     public function address_uxouts(string $params)
     {

@@ -8,13 +8,12 @@ use SkyCoin\HttpClient;
 
 class KeyValueStorage
 {
-    /**
-     * @var HttpClient
-     */
+    /*** @var HttpClient */
     private HttpClient $client;
 
     /**
      * Generic constructor.
+     * @param HttpClient $client
      */
     public function __construct(HttpClient $client)
     {

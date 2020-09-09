@@ -3,6 +3,8 @@
 namespace SkyCoin\API\Transaction;
 
 
+use Comely\Http\Exception\HttpException;
+use SkyCoin\Exception\SkyCoinAPIException;
 use SkyCoin\HttpClient;
 use SkyCoin\Transaction as trans;
 
@@ -12,6 +14,7 @@ class Transaction
 
     /**
      * Generic constructor.
+     * @param HttpClient $client
      */
     public function __construct(HttpClient $client)
     {
@@ -20,17 +23,22 @@ class Transaction
 
     /**
      * @param string $params
-     * @return \Exception|\SkyCoin\Exception
-     * @throws \SkyCoin\Exception\SkyCoinException
+     * @return array
+     * @throws HttpException
+     * @throws SkyCoinAPIException
      */
     public function pendingTxs(string $params=''){
         return $this->client->sendRequest("/v1/pendingTxs?".$params, [], [], "GET");
     }
 
     /**
-     * @param array $params
-     * @return \Exception|\SkyCoin\Exception
-     * @throws \SkyCoin\Exception\SkyCoinException
+     * @param array $hours_selection
+     * @param array $addresses
+     * @param string $change_address
+     * @param array $to
+     * @return trans
+     * @throws HttpException
+     * @throws SkyCoinAPIException
      */
     public function createTransaction(array $hours_selection, array $addresses,string $change_address,array $to) :trans
     {
@@ -55,8 +63,10 @@ class Transaction
 
     /**
      * @param string $params
-     * @return \Exception|\SkyCoin\Exception
-     * @throws \SkyCoin\Exception\SkyCoinException
+     * @param int|null $confirmed
+     * @return array
+     * @throws HttpException
+     * @throws SkyCoinAPIException
      */
     public function getTransactions(string $params,int $confirmed = null){
         return $this->client->sendRequest("/v1/transactions?addrs=".$params."&confirmed=".$confirmed, [], [], "GET");
@@ -65,8 +75,9 @@ class Transaction
     /**
      * @param string $params
      * @param int $param2
-     * @return \Exception|\SkyCoin\Exception
-     * @throws \SkyCoin\Exception\SkyCoinException
+     * @return trans
+     * @throws HttpException
+     * @throws SkyCoinAPIException
      */
     public function getTransaction(string $params,int $param2=0) :trans
     {
@@ -82,20 +93,20 @@ class Transaction
 
     /**
      * @param string $params
-     * @return \Exception|\SkyCoin\Exception
-     * @throws \SkyCoin\Exception\SkyCoinException
+     * @return trans
+     * @throws HttpException
+     * @throws SkyCoinAPIException
      */
     public function getRawTransaction(string $params) :trans
     {
         $data = $this->client->sendRequest("/v1/rawtx?txid=a6446654829a4a844add9f181949d12f8291fdd2c0fcb22200361e90e814e2d3", [], [], "GET");
-        $transaction = new trans($params);
-        return $transaction;
+        return new trans($params);
     }
 
     /**
-     * @param array $params
-     * @return \Exception|\SkyCoin\Exception
-     * @throws \SkyCoin\Exception\SkyCoinException
+     * @return trans
+     * @throws HttpException
+     * @throws SkyCoinAPIException
      */
     public function resendUnconfirmedTxns(){
         $result = $this->client->sendRequest("/v1/resendUnconfirmedTxns", [], []);
@@ -106,8 +117,9 @@ class Transaction
 
     /**
      * @param array $params
-     * @return \Exception|\SkyCoin\Exception
-     * @throws \SkyCoin\Exception\SkyCoinException
+     * @return array
+     * @throws HttpException
+     * @throws SkyCoinAPIException
      */
     public function verify(array $params){
         return $this->client->sendRequest("v2/transaction/verify", $params, []);
@@ -115,8 +127,9 @@ class Transaction
 
     /**
      * @param $params
-     * @return \Exception|\SkyCoin\Exception
-     * @throws \SkyCoin\Exception\SkyCoinException
+     * @return array
+     * @throws HttpException
+     * @throws SkyCoinAPIException
      */
     public function injectTransaction($params){
         return $this->client->sendRequest("/v1/injectTransaction", $params, []);

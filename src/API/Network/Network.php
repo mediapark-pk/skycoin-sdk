@@ -3,8 +3,9 @@ declare(strict_types=1);
 
 namespace SkyCoin\API\Network;
 
-
-use http\Exception\UnexpectedValueException;
+use Comely\Http\Exception\HttpException;
+use SkyCoin\Exception\SkyCoinAPIException;
+use SkyCoin\Exception\SkyCoinException;
 use SkyCoin\HttpClient;
 
 /**
@@ -20,6 +21,7 @@ class Network
 
     /**
      * Generic constructor.
+     * @param HttpClient $client
      */
     public function __construct(HttpClient $client)
     {
@@ -28,8 +30,8 @@ class Network
 
     /**
      * @param string $queryString
-     * @return \Exception|\SkyCoin\Exception
-     * @throws \SkyCoin\Exception\SkyCoinException
+     * @return array
+     * @throws SkyCoinException|HttpException
      */
     public function networkConnection(string $queryString)
     {
@@ -37,9 +39,9 @@ class Network
     }
 
     /**
-     * @param string $queryString
-     * @return \Exception|\SkyCoin\Exception
-     * @throws \SkyCoin\Exception\SkyCoinException
+     * @return array
+     * @throws HttpException
+     * @throws SkyCoinAPIException
      */
     public function networkConnections()
     {
@@ -48,8 +50,7 @@ class Network
     }
 
     /**
-     * @return \Exception|\SkyCoin\Exception
-     * @throws \SkyCoin\Exception\SkyCoinException
+     * @throws SkyCoinException|HttpException
      */
     public function defaultConnections()
     {
@@ -57,8 +58,7 @@ class Network
     }
 
     /**
-     * @return \Exception|\SkyCoin\Exception
-     * @throws \SkyCoin\Exception\SkyCoinException
+     * @throws SkyCoinException|HttpException
      */
     public function trustedConnections()
     {
@@ -67,8 +67,7 @@ class Network
     }
 
     /**
-     * @return \Exception|\SkyCoin\Exception
-     * @throws \SkyCoin\Exception\SkyCoinException
+     * @throws SkyCoinException|HttpException
      */
     public function networkByPeerExchange()
     {
@@ -78,8 +77,8 @@ class Network
 
     /**
      * @param string $queryString
-     * @return \Exception|\SkyCoin\Exception
-     * @throws \SkyCoin\Exception\SkyCoinException
+     * @return array
+     * @throws SkyCoinException|HttpException
      */
     public function disconnectNetwork(string $queryString)
     {

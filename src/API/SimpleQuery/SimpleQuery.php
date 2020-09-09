@@ -3,12 +3,12 @@
 
 namespace SkyCoin\API\SimpleQuery;
 
+use Comely\Http\Exception\HttpException;
+use SkyCoin\Exception\SkyCoinAPIException;
 use Skycoin\HttpClient;
 class SimpleQuery
 {
-    /**
-     * @var HttpClient
-     */
+    /*** @var HttpClient*/
     private HttpClient $client;
 
     /**
@@ -21,8 +21,9 @@ class SimpleQuery
 
     /**
      * @param string $addresses
-     * @return \Exception|\SkyCoin\Exception
-     * @throws \SkyCoin\Exception\SkyCoinException
+     * @return array
+     * @throws HttpException
+     * @throws SkyCoinAPIException
      */
     public function getBalance(string $addresses){
         return $this->client->sendRequest("/v1/balance?".$addresses, [], [], "GET");
@@ -30,8 +31,9 @@ class SimpleQuery
 
     /**
      * @param string $addresses
-     * @return \Exception|\SkyCoin\Exception
-     * @throws \SkyCoin\Exception\SkyCoinException
+     * @return array
+     * @throws HttpException
+     * @throws SkyCoinAPIException
      */
     public function getUnspent(string $addresses){
         return $this->client->sendRequest("/v1/outputs?".$addresses, [], [], "GET");
