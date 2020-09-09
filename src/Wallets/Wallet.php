@@ -1,10 +1,11 @@
 <?php
-
+declare(strict_types=1);
 
 namespace SkyCoin\Wallets;
 
-
-use SkyCoin\Exception\SkyCoinException;
+use SkyCoin\Exception\SkyCoinWalletException;
+use SkyCoin\SkyCoin;
+use SkyCoin\Validator;
 
 /**
  * Class Wallet
@@ -12,39 +13,33 @@ use SkyCoin\Exception\SkyCoinException;
  */
 class Wallet
 {
-    /**
-     * @var string
-     */
-    private string $password;
-    /**
-     * @var string
-     */
+    /** @var SkyCoin */
+    private SkyCoin $skyCoin;
+    /** @var string */
     private string $filename;
-    /**
-     * @var string
-     */
-    private string $label;
+    /** @var string|null */
+    private ?string $password = null;
+    /** @var Balance|null */
+    private ?Balance $balance = null;
 
     /**
      * Wallet constructor.
+     * @param SkyCoin $skyCoin
+     * @param string $walletFilename
+     * @param string|null $password
+     * @throws SkyCoinWalletException
      */
-
-    private Balance $balance;
-
-    /**
-     * Wallet constructor.
-     */
-    public function __construct()
+    public function __construct(SkyCoin $skyCoin, string $walletFilename, ?string $password = null)
     {
-        $this->balance = new Balance();
-    }
+        if (!Validator::isValidWalletFilename($walletFilename)) {
+            throw new SkyCoinWalletException('Invalid wallet identifier/filename');
+        }
 
-    /**
-     * @return string
-     */
-    public function getPassword(): string
-    {
-        return $this->password;
+        $this->skyCoin = $skyCoin;
+        $this->filename = $walletFilename;
+        if ($password) {
+            $this->setPassword($password);
+        }
     }
 
     /**
@@ -54,80 +49,4 @@ class Wallet
     {
         $this->password = $password;
     }
-
-    /**
-     * @return string
-     */
-    public function getFilename(): string
-    {
-        return $this->filename;
-    }
-
-    /**
-     * @param string $filename
-     */
-    public function setFilename(string $filename): void
-    {
-        if (!preg_match("/.(wlt)$/i",$filename)) {
-            throw new SkyCoinException("Wrong Filename");
-        }
-        $this->filename = $filename;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLabel(): string
-    {
-        return $this->label;
-    }
-
-    /**
-     * @param string $label
-     */
-    public function setLabel(string $label): void
-    {
-        $this->label = $label;
-    }
-
-
-    /**
-     * @return mixed
-     */
-    public function createAddress(): array
-    {
-        $headers = ["Content-Type" => "application/x-www-form-urlencoded"];
-        $params = [
-            "id" => $this->filename,
-            "password" => $this->password
-        ];
-        $data = $this->client->sendRequest("/v1/wallet/newAddress", $params, $headers);
-
-        if ($data->payload()->get("addresses")) {
-
-            $response = array();
-            $response["address"] = $data->payload()->get("addresses");
-            return $response;
-        }
-
-
-    }
-
-    /**
-     * @return Balance
-     */
-    public function getBalance(): Balance
-    {
-        $data = $this->client->sendRequest("/v1/wallet/balance?id=" . $this->getFilename(), [], [], "GET");
-        if ($data->payload()->get('confirmed')) {
-            $this->balance->setConfirmedCoins($data->payload()->get('confirmed')['coins']);
-            $this->balance->setConfirmedHours($data->payload()->get('confirmed')['hours']);
-            $this->balance->setPredictedCoins($data->payload()->get('predicted')['hours']);
-            $this->balance->setPredictedHours($data->payload()->get('predicted')['hours']);
-            return $this->balance;
-        }
-
-    }
-
-
 }

@@ -1,10 +1,10 @@
 <?php
-
+declare(strict_types=1);
 
 namespace SkyCoin\Wallets;
 
-use SkyCoin\HttpClient;
-use SkyCoin\Wallets\Wallet;
+use SkyCoin\Exception\SkyCoinAPIException;
+use SkyCoin\SkyCoin;
 
 /**
  * Class WalletsFactory
@@ -12,26 +12,17 @@ use SkyCoin\Wallets\Wallet;
  */
 class WalletsFactory
 {
-    /**
-     * @var HttpClient
-     */
-    private HttpClient $client;
+    /** @var SkyCoin */
+    private SkyCoin $skyCoin;
 
     /**
-     * @var \SkyCoin\Wallets\Wallet
+     * WalletsFactory constructor.
+     * @param SkyCoin $skyCoin
      */
-    private Wallet $wallet;
-
-    /**
-     * Generic constructor.
-     */
-    public function __construct(HttpClient $client)
+    public function __construct(SkyCoin $skyCoin)
     {
-        $this->client = $client;
-
-
+        $this->skyCoin = $skyCoin;
     }
-
 
     /**
      * @param string $seed
@@ -39,10 +30,11 @@ class WalletsFactory
      * @param string $password
      * @param string $type
      * @param int $scan
-     * @return \SkyCoin\Wallets\Wallet
-     * @throws \SkyCoin\Exception\SkyCoinException
+     * @return NewWallet
+     * @throws SkyCoinAPIException
+     * @throws \Comely\Http\Exception\HttpException
      */
-    public function createWallet(string $seed, string $label, string $password, string $type = "deterministic", int $scan = 0): Wallet
+    public function create(string $seed, string $label, string $password, string $type = "deterministic", int $scan = 1): NewWallet
     {
         $params = [
             "seed" => $seed,
@@ -51,39 +43,44 @@ class WalletsFactory
             "type" => $type,
             "scan" => $scan
         ];
+
         if ($password) {
             $params["encrypt"] = "true";
         }
-        $headers = ["Content-Type" => "application/x-www-form-urlencoded"];
-        $data = $this->client->sendRequest("/v1/wallet/create", $params, $headers);
-        if ($data->payload()->get('meta')) {
-            $this->wallet = new Wallet();
-            $this->wallet->setFilename($data->payload()->get('meta')['filename']);
-            $this->wallet->setLabel($data->payload()->get('meta')['label']);
-            $this->wallet->setPassword($password);
-            return $this->wallet;
+
+        $headers = [
+            "Content-Type" => "application/x-www-form-urlencoded"
+        ];
+
+        $data = $this->skyCoin->httpClient()->sendRequest("/v1/wallet/create", $params, $headers, "POST");
+        $meta = $data["meta"] ?? null;
+        if (!is_array($meta) || !$meta) {
+            throw new SkyCoinAPIException('Could not retrieve meta object for new wallet');
         }
 
+        $newWallet = new NewWallet();
+        $newWallet->label = $meta["label"];
+        $newWallet->filename = $meta["filename"];
+        $newWallet->version = $meta["version"];
 
+        $primaryAddr = $data["entries"][0] ?? null;
+        if (!is_array($primaryAddr) || !$primaryAddr) {
+            throw new SkyCoinAPIException('Could not retrieve entries object for new wallet');
+        }
+
+        $newWallet->primaryAddr = $primaryAddr["address"];
+        $newWallet->primaryPubKey = $primaryAddr["public_key"];
+
+        return $newWallet;
     }
 
-
     /**
-     * @return \SkyCoin\Wallets\Wallet
-     * @throws \SkyCoin\Exception\SkyCoinException
+     * @param string $walletId
+     * @return Wallet
+     * @throws \SkyCoin\Exception\SkyCoinWalletException
      */
-    public function getWallet(): Wallet
+    public function get(string $walletId): Wallet
     {
-//        print_r($this->wallet->getFilename());
-//        die();
-        $data = $this->client->sendRequest("/v1/wallet?id=" . $this->wallet->getFilename(), [], [], "GET");
-//        $data = $this->client->sendRequest("/v1/wallet?id=" . "2020_09_09_c2af.wlt", [], [], "GET");
-        if ($data->payload()->get('meta')) {
-            $this->wallet = new Wallet();
-            $this->wallet->setFilename($data->payload()->get('meta')['filename']);
-            $this->wallet->setLabel($data->payload()->get('meta')['label']);
-            $this->wallet->setPassword();
-            return $this->wallet;
-        }
+        return new Wallet($this->skyCoin, $walletId);
     }
 }

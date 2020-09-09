@@ -1,6 +1,4 @@
 <?php
-
-
 declare(strict_types=1);
 
 namespace SkyCoin\Exception;
@@ -9,7 +7,7 @@ namespace SkyCoin\Exception;
  * Class SkyCoinException
  * @package SkyCoin\Exception
  */
-class SkyCoinException extends SkyCoinAPIException
+class SkyCoinException extends \Exception
 {
     /**
      * @param string $method

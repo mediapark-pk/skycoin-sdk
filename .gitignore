@@ -1,6 +1,5 @@
 vendor/
-composer.lock
-.idea/*
-workspace/
 composer.phar
-composer.phar/
+composer.lock
+.idea/
+workspace/

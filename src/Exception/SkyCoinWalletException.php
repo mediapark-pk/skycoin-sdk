@@ -4,9 +4,9 @@ declare(strict_types=1);
 namespace SkyCoin\Exception;
 
 /**
- * Class ResponseObjectException
+ * Class SkyCoinWalletException
  * @package SkyCoin\Exception
  */
-class ResponseObjectException extends SkyCoinAPIException
+class SkyCoinWalletException extends SkyCoinException
 {
 }

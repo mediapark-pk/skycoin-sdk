@@ -1,23 +1,27 @@
 <?php
+declare(strict_types=1);
 
 namespace SkyCoin;
 
-
-use SkyCoin\API\Generic;
-use SkyCoin\Exception\SkyCoinException;
 use Comely\Http\Request;
+use SkyCoin\Exception\SkyCoinAPIException;
 
+/**
+ * Class HttpClient
+ * @package SkyCoin
+ */
 class HttpClient
 {
-
     /** @var string */
     private string $ip;
-    /** @var int */
-    private ?int $port = NULL;
-    /** @var string */
-    private string $username;
-    /** @var string */
-    private string $password;
+    /** @var int|null */
+    private ?int $port;
+    /** @var string|null */
+    private ?string $username;
+    /** @var string|null */
+    private ?string $password;
+    /** @var bool */
+    private bool $https;
 
     /**
      * HttpClient constructor.
@@ -25,179 +29,102 @@ class HttpClient
      * @param int|null $port
      * @param string|null $username
      * @param string|null $password
+     * @param bool $https
      */
-    public function __construct(string $ip, ?int $port = NULL, ?string $username = "", ?string $password = "")
+    public function __construct(string $ip, ?int $port = null, ?string $username = "", ?string $password = "", bool $https = false)
     {
         $this->ip = $ip;
         $this->port = $port;
         $this->username = $username;
         $this->password = $password;
+        $this->https = $https;
     }
 
+    /**
+     * @return string
+     * @throws SkyCoinAPIException
+     * @throws \Comely\Http\Exception\HttpException
+     */
+    public function getCSRFToken(): string
+    {
+        $csrfToken = $this->sendRequest("/v1/csrf")["csrf_token"] ?? null;
+        if (!is_string($csrfToken) || !$csrfToken) {
+            throw new SkyCoinAPIException('Could not retrieve CSRF token');
+        }
+
+        return $csrfToken;
+    }
 
     /**
-     * @param string $uri
+     * @param string $endpoint
      * @param array $params
-     * @param string|string $httpMethod
-     * @return \Exception|Exception
-     * @throws SkyCoinException
+     * @param array $headers
+     * @param string $httpMethod
+     * @return array
+     * @throws SkyCoinAPIException
+     * @throws \Comely\Http\Exception\HttpException
      */
-    public function sendRequest(string $uri, array $params = [], array $headers = [], string $httpMethod = "POST")
+    public function sendRequest(string $endpoint, array $params = [], array $headers = [], string $httpMethod = "GET"): array
     {
-        $url = null;
-        //If port is given or not
-        if ($this->port) {
-            try {
-                $url = self::generateUrl($this->ip, $this->port);
-            } catch (Exception $e) {
-                return $e;
+        $url = $this->generateUri($endpoint);
+        $req = new Request($httpMethod, $url);
 
-            }
-        } else {
-
-            $url = $this->ip;
-        }
-
-        //Set Complete Url
-        $url .= $uri;
-//        print_r($url);
-//        die();
-        //Create Request Instance
-        $request = new Request($httpMethod, $url);
-
-        //Set CSRF header if request is not GET
+        // Set CSRF header if request is not GET
         if (strtoupper($httpMethod) != "GET") {
-            $generic = new Generic($this);
-            $csrf = $generic
-                ->csrfToken()
-                ->payload()
-                ->get("csrf_token");
-
-            $request
-                ->headers()
-                ->set("X-CSRF-Token", $csrf);
+            $req->headers()->set("X-CSRF-Token", $this->getCSRFToken());
         }
 
-//        print_r($params);die();
-        //HardCode For Testing Purpose
-//        $request
-//            ->headers()
-//            ->set("X-CSRF-Token", "eyJOb25jZSI6IkRYUlBWeVN3S2J3d1lLekZyVlR3UmJWenpWSnFKWDVSMDE4ajRKaFNOQnVEOVphYkFsTUlBU3R4UWQvWnR5dGI1S1JoWDZwYkVWZDFrVGhBenUxbHNnPT0iLCJFeHBpcmVzQXQiOiIyMDIwLTA5LTA5VDA2OjExOjIzLjQ0OTQ3NDU5NFoifQ._Mxd_UEOun171fwEsMyo9_tRqsKvLwDkms_226W86I4");
+        // Set Request Headers
+        $req->headers()->set("accept", "application/json");
 
-        //Set Request Headers
-        $request
-            ->headers()
-            ->set("Accept", "application/json");
-
-        //Set Dynamic Headers
-        if (count($headers) > 0) {
-
-            array_walk($headers, ['self', "setHeaders"], $request);
-        } else {
-            $request
-                ->headers()
-                ->set("Content-Type", "application/json");
-        }
-        //Set Request Body/Params
-
-        $params ? $request->payload()->use($params) : null;
-
-        $request = $request->curl();
-
-
-        //Set Basic Authentication
-//        $request->auth()->basic($this->username, $this->password);
-
-
-        //Send The Request
-        $response = $request->send();
-
-
-
-        $errorCode = $response->code();
-        if ($errorCode != 200) {
-
-            if ($errorCode == 400) {
-                $errorMessage = $error["message"] ?? 'Bad Request';
-            } elseif ($errorCode == 401) {
-                $errorMessage = $error["message"] ?? 'Unauthorized';
-            } elseif ($errorCode == 403) {
-                $errorMessage = $error["message"] ?? 'Forbidden';
-            } else if ($errorCode == 404) {
-                $errorMessage = $error["message"] ?? 'Not Found';
-            } else {
-                $errorMessage = $error["message"] ?? 'An error occurred';
+        // Set Dynamic Headers
+        if ($headers) {
+            foreach ($headers as $key => $value) {
+                $req->headers()->set($key, $value);
             }
-
-            throw new SkyCoinException($errorMessage, $errorCode);
+        } else {
+            $req->headers()->set("content-type", "application/json");
         }
 
-        // Check for Error
-        $error = $response->payload()->get("error");
-        if (is_array($error)) {
-
-            $errorCode = intval($error["code"] ?? 0);
-
-
-            $errorMessage = $error["message"] ?? 'An error occurred';
-
-            throw new SkyCoinException($errorMessage, $errorCode);
-        }
-        // Result
-        if (($response->payload()->get("result") != 0) && (!$response->payload()->get("result"))) {
-            throw new SkyCoinException('No response was received');
+        // Set Request Body/Params
+        if ($params) {
+            $req->payload()->use($params);
         }
 
-        return $response;
+        $request = $req->curl();
+        if ($this->username && $this->password) {
+            $request->auth()->basic($this->username, $this->password);
+        }
 
+        // Send The Request
+        $res = $request->send();
+        $errCode = $res->code();
+        if ($errCode !== 200) {
+            $errMsg = $res->body()->value();
+            if ($errMsg) {
+                $errMsg = trim(explode("-", $errMsg)[1]);
+                throw new SkyCoinAPIException($errMsg ? $errMsg : sprintf('HTTP Response Code %d', $errCode), $errCode);
+            }
+        }
+
+        return $res->payload()->array();
     }
 
-
     /**
-     * @param string $ip
-     * @param int $port
+     * @param string|null $endpoint
      * @return string
      */
-    public function generateUrl(string $ip, int $port): string
+    public function generateUri(?string $endpoint = null): string
     {
-        /*Port Checking */
-        if (!is_numeric($port)) {
-            throw new Exception("A port can only be a number", 1);
-
+        $url = sprintf('%s://%s', $this->https ? "https" : "http", $this->ip);
+        if ($this->port) {
+            $url .= ":" . $this->port;
         }
-        return $ip . ":" . $port;
+
+        if ($endpoint) {
+            $url .= "/api/" . ltrim($endpoint, "/");
+        }
+
+        return $url;
     }
-
-
-    /**
-     * @param string $uri
-     * @param array $replaceBy
-     * @param array $find
-     * @return string
-     */
-    public function generateURI(string $uri, array $replaceBy, array $find): string
-    {
-        $result = str_replace(
-            $find,
-            $replaceBy,
-            $uri
-        );
-        return $result;
-
-    }
-
-
-    /**
-     * @param $value
-     * @param $key
-     * @param $request
-     */
-    public function setHeaders($value, $key, &$request)
-    {
-        $request
-            ->headers()
-            ->set($key, $value);
-    }
-
-
 }

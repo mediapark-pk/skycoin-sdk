@@ -7,6 +7,6 @@ namespace SkyCoin\Exception;
  * Class SkyCoinAPIException
  * @package SkyCoin\Exception
  */
-class SkyCoinAPIException extends \Exception
+class SkyCoinAPIException extends SkyCoinException
 {
 }
