@@ -25,7 +25,7 @@ class Uxout
      */
     public function uxout(string $params)
     {
-        return $this->client->sendRequest("/v1/uxout?".$params, [], [], "GET");
+        return $this->client->sendRequest("/v1/uxout?uxid=".$params, [], [], "GET");
     }
 
     /**
@@ -35,7 +35,7 @@ class Uxout
      */
     public function address_uxouts(string $params)
     {
-        return $this->client->sendRequest("/v1/address_uxouts?".$params,[],[],'GET');
+        return $this->client->sendRequest("/v1/address_uxouts?address=".$params,[],[],'GET');
     }
 
 }
