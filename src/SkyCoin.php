@@ -17,6 +17,7 @@ use SkyCoin\API\Uxout\Uxout;
 
 use SkyCoin\API\Wallet\Wallet;
 use SkyCoin\HttpClient;
+use SkyCoin\Wallets\WalletsFactory;
 
 /**
  * Class SkyCoin
@@ -83,6 +84,11 @@ class SkyCoin
     private Transaction $transaction;
 
     /**
+     * @var WalletsFactory
+     */
+    private WalletsFactory $walletFactory;
+
+    /**
      * SkyCoin constructor.
      * @param Generic $generic
      */
@@ -92,6 +98,7 @@ class SkyCoin
         $httpClient = new HttpClient($ip, $port, $username, $password);
         $this->generic = new Generic($httpClient);
         $this->wallet = new Wallet($httpClient);
+        $this->walletFactory = new WalletsFactory($httpClient);
 
         $this->network = new Network($httpClient);
 
@@ -185,6 +192,14 @@ class SkyCoin
     {
         return $this->coinSupply;
 
+    }
+
+    /**
+     * @return walletFactory
+     */
+    public function walletFactory() :WalletsFactory
+    {
+        return $this->walletFactory;
     }
 
 

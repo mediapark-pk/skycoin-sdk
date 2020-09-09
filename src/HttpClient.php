@@ -78,10 +78,11 @@ class HttpClient
                 ->set("X-CSRF-Token", $csrf);
         }
 
+//        print_r($params);die();
         //HardCode For Testing Purpose
 //        $request
 //            ->headers()
-//            ->set("X-CSRF-Token", "eyJOb25jZSI6IkNXK2lEUkFyTExja0NzZFIwYVdhQWZveXcydEJrTXdlZkw1ZXJwS3lGWUdySzM1eUFXaCtlcWE0YW0rZHNEdzBKbGNNR3ZSTUhMb3B1OXJibVVBeUxnPT0iLCJFeHBpcmVzQXQiOiIyMDIwLTA5LTA0VDExOjQxOjM5Ljg4Nzg5MTY0OVoifQ.wt9_uOYvhS0T_84SG-pNfj87iW4ufcUmAg2ytLIQNkE");
+//            ->set("X-CSRF-Token", "eyJOb25jZSI6IkRYUlBWeVN3S2J3d1lLekZyVlR3UmJWenpWSnFKWDVSMDE4ajRKaFNOQnVEOVphYkFsTUlBU3R4UWQvWnR5dGI1S1JoWDZwYkVWZDFrVGhBenUxbHNnPT0iLCJFeHBpcmVzQXQiOiIyMDIwLTA5LTA5VDA2OjExOjIzLjQ0OTQ3NDU5NFoifQ._Mxd_UEOun171fwEsMyo9_tRqsKvLwDkms_226W86I4");
 
         //Set Request Headers
         $request
@@ -112,6 +113,7 @@ class HttpClient
         $response = $request->send();
 
 
+
         $errorCode = $response->code();
         if ($errorCode != 200) {
 
@@ -119,6 +121,8 @@ class HttpClient
                 $errorMessage = $error["message"] ?? 'Bad Request';
             } elseif ($errorCode == 401) {
                 $errorMessage = $error["message"] ?? 'Unauthorized';
+            } elseif ($errorCode == 403) {
+                $errorMessage = $error["message"] ?? 'Forbidden';
             } else if ($errorCode == 404) {
                 $errorMessage = $error["message"] ?? 'Not Found';
             } else {

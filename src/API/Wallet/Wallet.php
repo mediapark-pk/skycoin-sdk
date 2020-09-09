@@ -40,12 +40,15 @@ class Wallet
 
 
     /**
-     * @param array $params
-     * @param array $headers
+     * @param string $seed
+     * @param string $label
+     * @param string $password
+     * @param string $type
+     * @param int $scan
      * @return \Exception|\SkyCoin\Exception
      * @throws \SkyCoin\Exception\SkyCoinException
      */
-    public function createWallet(array $params, array $headers)
+    public function createWallet($params,$headers)
     {
 
         return $this->client->sendRequest("/v1/wallet/create", $params, $headers);
