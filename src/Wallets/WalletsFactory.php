@@ -74,8 +74,8 @@ class WalletsFactory
      */
     public function getWallet(): Wallet
     {
-        print_r($this->wallet->getFilename());
-        die();
+//        print_r($this->wallet->getFilename());
+//        die();
         $data = $this->client->sendRequest("/v1/wallet?id=" . $this->wallet->getFilename(), [], [], "GET");
 //        $data = $this->client->sendRequest("/v1/wallet?id=" . "2020_09_09_c2af.wlt", [], [], "GET");
         if ($data->payload()->get('meta')) {

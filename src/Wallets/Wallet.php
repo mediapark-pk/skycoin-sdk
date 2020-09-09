@@ -118,7 +118,7 @@ class Wallet
      */
     public function getBalance(): Balance
     {
-        $data = $this->client->sendRequest("/v1/wallet/balance?" . $this->getFilename(), [], [], "GET");
+        $data = $this->client->sendRequest("/v1/wallet/balance?id=" . $this->getFilename(), [], [], "GET");
         if ($data->payload()->get('confirmed')) {
             $this->balance->setConfirmedCoins($data->payload()->get('confirmed')['coins']);
             $this->balance->setConfirmedHours($data->payload()->get('confirmed')['hours']);
