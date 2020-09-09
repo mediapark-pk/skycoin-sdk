@@ -35,6 +35,8 @@ class Transaction
     public array $inputs;
     /** @var array */
     public array $outputs;
+    /** @var array */
+    public array $raw;
 
     /**
      * Transaction constructor.
@@ -43,6 +45,7 @@ class Transaction
      */
     public function __construct(array $tx)
     {
+        $this->raw = $tx;
         $status = $tx["status"];
         if (!is_array($status) || !$status) {
             throw new SkyCoinTxException('No "status" object in response tx');

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace SkyCoin;
 
+use SkyCoin\Blocks\Blocks;
 use SkyCoin\Transactions\TxFactory;
 use SkyCoin\Wallets\WalletsFactory;
 
@@ -18,6 +19,8 @@ class SkyCoin
     private WalletsFactory $walletFactory;
     /** @var TxFactory */
     private TxFactory $txFactory;
+    /** @var Blocks */
+    private Blocks $blocks;
 
     /**
      * SkyCoin constructor.
@@ -32,6 +35,7 @@ class SkyCoin
         $this->httpClient = new HttpClient($ip, $port, $username, $password, $https);
         $this->walletFactory = new WalletsFactory($this);
         $this->txFactory = new TxFactory($this);
+        $this->blocks = new Blocks($this);
     }
 
     /**
@@ -56,5 +60,13 @@ class SkyCoin
     public function txs(): TxFactory
     {
         return $this->txFactory;
+    }
+
+    /**
+     * @return Blocks
+     */
+    public function blocks(): Blocks
+    {
+        return $this->blocks;
     }
 }
