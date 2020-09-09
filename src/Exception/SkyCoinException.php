@@ -5,8 +5,6 @@ declare(strict_types=1);
 
 namespace SkyCoin\Exception;
 
-use SkyCoin\Exception\SkyCoinAPIException;
-
 /**
  * Class SkyCoinException
  * @package SkyCoin\Exception
