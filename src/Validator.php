@@ -21,4 +21,17 @@ class Validator
 
         return false;
     }
+
+    /**
+     * @param $arg
+     * @return bool
+     */
+    public static function isValidAddress($arg): bool
+    {
+        if (is_string($arg) && preg_match('/^[a-z0-9]{30,40}$/i', $arg)) {
+            return true;
+        }
+
+        return false;
+    }
 }
