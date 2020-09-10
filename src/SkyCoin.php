@@ -39,6 +39,16 @@ class SkyCoin
     }
 
     /**
+     * @return array
+     * @throws Exception\SkyCoinAPIException
+     * @throws \Comely\Http\Exception\HttpException
+     */
+    public function healthCheck(): array
+    {
+        return $this->httpClient->sendRequest("/v1/health");
+    }
+
+    /**
      * @return HttpClient
      */
     public function httpClient(): HttpClient
