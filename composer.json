@@ -2,6 +2,8 @@
   "name": "mediapark-pk/skycoin-sdk",
   "description": "SkyCoin API SDK in PHP",
   "require": {
+    "ext-json": "*",
+    "ext-bcmath": "*",
     "comely-io/http": "^1.0.47"
   },
   "autoload": {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace SkyCoin\Wallets;
 
 use SkyCoin\Exception\SkyCoinAPIException;
+use SkyCoin\Exception\SkyCoinTxException;
 use SkyCoin\Exception\SkyCoinWalletException;
 use SkyCoin\SkyCoin;
 use SkyCoin\Validator;
@@ -106,5 +107,36 @@ class Wallet
         $balance->predictedHours = $predicted["hours"];
 
         return $balance;
+    }
+
+    /**
+     * @return SpendTxConstructor
+     */
+    public function newTransaction(): SpendTxConstructor
+    {
+        return new SpendTxConstructor($this);
+    }
+
+    /**
+     * @param SpendTxConstructor $spendTx
+     * @return PreparedTx
+     * @throws SkyCoinAPIException
+     * @throws SkyCoinTxException
+     * @throws \Comely\Http\Exception\HttpException
+     */
+    public function createTransaction(SpendTxConstructor $spendTx): PreparedTx
+    {
+        $spendTx = $spendTx->array();
+        $spendTx["wallet_id"] = $this->filename;
+        if ($this->password) {
+            $spendTx["password"] = $this->password;
+        }
+
+        if ($spendTx["unsigned"] === false && !isset($spendTx["password"])) {
+            throw new SkyCoinTxException('Wallet password is required to sign transaction');
+        }
+
+        $tx = $this->skyCoin->httpClient()->sendRequest("/v1/wallet/transaction", $spendTx, [], "POST");
+        return new PreparedTx($tx);
     }
 }
