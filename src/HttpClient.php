@@ -102,7 +102,7 @@ class HttpClient
         if ($errCode !== 200) {
             $errMsg = $res->body()->value();
             if ($errMsg) {
-                $errMsg = trim(strval(explode("-", $errMsg)[1]));
+                $errMsg = trim(strval(explode("-", $errMsg)[1] ?? ""));
                 throw new SkyCoinAPIException($errMsg ? $errMsg : sprintf('HTTP Response Code %d', $errCode), $errCode);
             }
         }
