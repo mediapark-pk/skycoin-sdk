@@ -103,7 +103,7 @@ class SpendTxConstructor
      * @return $this
      * @throws SkyCoinTxException
      */
-    public function to(string $addr, string $coins, ?string $hours = null): self
+    public function to(string $addr, string $coins, ?string $hours = "0"): self
     {
         if (!Validator::isValidAddress($addr)) {
             throw new SkyCoinTxException('Invalid payee address');
@@ -112,8 +112,11 @@ class SpendTxConstructor
         $payee = [
             "address" => $addr,
             "coins" => $coins,
-            "hours" => $hours ?? "0",
         ];
+
+        if (is_string($hours)) {
+            $payee["hours"] = $hours;
+        }
 
         $this->payees[] = $payee;
         return $this;
